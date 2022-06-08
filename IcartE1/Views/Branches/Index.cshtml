@@ -1,0 +1,60 @@
+﻿@model IEnumerable<IcartE1.Data.Branch>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="container py-4">
+    <div class="mb-3">
+        <h1 class="display-4 d-inline">Branches</h1>
+
+        <span class="mx-2">
+            <a asp-action="Create">Create New</a>
+        </span>
+    </div>
+
+        <div id="accordion">
+        @foreach (var item in Model)
+        {
+            <div class="card">
+                <div class="card-header" id="heading@(item.Id)">
+                    <div class="row justify-content-between">
+                        <h5 class="mb-0  d-inline-flex">
+                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapse@(item.Id)" aria-expanded="false" aria-controls="collapse@(item.Id)">
+                                @item.Title
+                            </button>
+                        </h5>
+                        <div class="d-inline-flex">
+                            <a class="mx-2" asp-action="Sales" asp-controller="Home" asp-route-branchId="@item.Id">Sales</a> |
+   <a class="mx-2" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+    <a class="mx-2 text-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="collapse@(item.Id)" class="collapse" aria-labelledby="heading@(item.Id)" data-parent="#accordion">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <h2 class="font-weight-light mb-3">Details</h2>
+                                
+                                <div>
+                                    <label asp-for="@item.Latitude" class="font-weight-bold"></label>
+                                    <span class="mx-2">@item.Latitude</span>
+                                </div>
+                                <div>
+                                    <label asp-for="@item.Longitude" class="font-weight-bold"></label>
+                                    <span class="mx-2">@item.Longitude</span>
+                                </div>
+                               
+                               
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>

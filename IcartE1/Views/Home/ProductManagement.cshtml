@@ -1,0 +1,57 @@
+﻿@{
+    ViewData["Title"] = "Product Management";
+}
+
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card box-shadow" style="border-radius:10px;">
+                <div class="card-header border border-light">
+                    <h2 style="letter-spacing:0.2rem;" class="font-weight-light card-title text-center">Products</h2>
+                </div>
+                <img src="https://static.vecteezy.com/system/resources/thumbnails/001/869/276/small_2x/groceries-in-shopping-cart-free-form-style-free-vector.jpg"
+                     class="card-img-top border-bottom border-top"  height="250" width="250">
+
+
+                <div class="card-body d-flex flex-column justify-content-between" style="height:12rem;">
+                    <p class="card-text text-justify px-3">Have full control over the products selection prsented to your customers. Create, Update and delete products whenever.</p>
+                    <div class="text-center px-3"> <a class="btn btn-block btn-outline-primary mx-auto" style="border-radius:50px;" asp-controller="Products" asp-action="Index">Go</a></div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card box-shadow" style="border-radius:10px;">
+                <div class="card-header border border-light">
+                    <h2 style="letter-spacing:0.2rem;" class="font-weight-light card-title text-center">Categories</h2>
+                </div>
+                <img src="https://previews.123rf.com/images/brisker/brisker1605/brisker160500027/58489983-16-iconos-de-diferentes-categor%C3%ADas-de-productos-para-tiendas-online.jpg"
+                     class="card-img-top border-bottom border-top"  height="250" width="250">
+
+
+                <div class="card-body d-flex flex-column justify-content-between" style="height:12rem;">
+                    <p class="card-text text-justify px-3">Categorize your products to make it easier for your customer to get what they're looking for.</p>
+                    <div class="text-center px-3"> <a class="btn btn-block btn-outline-primary" style="border-radius:50px;" asp-controller="Categories" asp-action="Index">Go</a></div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card box-shadow" style="border-radius:10px;">
+                <div class="card-header border border-light">
+                    <h2 style="letter-spacing:0.2rem;" class="font-weight-light card-title text-center">Vendors</h2>
+                </div>
+                <img src="https://previews.123rf.com/images/vectorshowstudio/vectorshowstudio1901/vectorshowstudio190100043/126222291-food-market-vector-salesman-seller-character-selling-in-bookshop-butcher-or-baker-in-stall-illustrat.jpg"
+                     class="card-img-top border-bottom border-top"  height="250" width="250">
+
+
+                <div class="card-body d-flex flex-column justify-content-between" style="height:12rem;">
+                    <p class="card-text text-justify px-3">Maintain contact information for all your vendors to ensure you could always reach them to restock.</p>
+                    <div class="text-center px-3"> <a class="btn btn-block btn-outline-primary" style="border-radius:50px;" asp-controller="Vendors" asp-action="Index">Go</a></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

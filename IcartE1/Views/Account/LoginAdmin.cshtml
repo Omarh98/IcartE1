@@ -1,0 +1,41 @@
+﻿@model IcartE1.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card my-5 box-shadow">
+
+                <form class="card-body cardbody-color p-lg-5" asp-controller="Account" asp-action="LoginAdmin">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="text-center">
+                        <img src="https://d1nhio0ox7pgb.cloudfront.net/_img/g_collection_png/standard/256x256/shopping_cart_full.png" class="p-3 img-thumbnail rounded-circle mt-3 mb-4"
+                             width="230" alt="profile">
+                    </div>
+
+                    <div class="mb-3">
+                        <input class="form-control" asp-for="@Model.Email" placeholder="Email">
+                    </div>
+                    <div class="mb-3">
+                        <input class="form-control" type="password" asp-for="@Model.Password" placeholder="Password">
+                    </div>
+                    <div class="text-center"><button type="submit" class="btn btn-dark px-5 mb-5 w-100">Login</button></div>
+                    <div id="emailHelp" class="form-text text-center mb-5 text-dark">
+                        Not
+                        Registered? <a href="#" class="text-dark fw-bold">
+                            Contact your admin.
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,60 @@
+﻿@model IEnumerable<IcartE1.Models.ProductStocksViewModel>
+
+@{
+    ViewData["Title"] = "Product Stocks";
+}
+
+<div class="container py-4">
+    <h1 class="display-4 mb-4">Product Stocks</h1>
+
+
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Title)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Quantity)
+                </th>
+                <th>
+                    Status
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                    @if (item.Quantity > item.ReorderQuantity)
+                    {
+                    <p class="text-success">In stock</p>
+                    }
+                    else
+                    {
+                    <p class="text-danger">Re-order needed</p>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Index" asp-route-productId="@item.Key">View Batches</a>
+                    @if (item.Quantity < item.ReorderQuantity)
+                    {
+                    <span>|</span>
+                    <a href="mailto:@item.Email">Email</a>
+                    <span>|</span>
+                    <a href="tel:@item.PhoneNumber">Call</a>
+                    }
+
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>

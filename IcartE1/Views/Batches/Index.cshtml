@@ -1,0 +1,99 @@
+﻿@model IcartE1.Models.BatchFilterViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="container py-4">
+    <div class="mb-3">
+        <h1 class=" display-4 d-inline">Batches</h1>
+        <span class="mx-2">
+            <a asp-action="Create">Create New</a>
+        </span>
+    </div>
+
+    <div class="mb-3">
+
+        <form class="form-inline">
+
+            <div class="form-group">
+                <label class="col-form-label mx-2">Product</label>
+                <select asp-for=@Model.ProductId class="form-control" id="productList" name="ProductId" asp-items="@ViewBag.ProductId">
+                    <option value="0">Any</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="col-form-label mx-2">Branch</label>
+                <select asp-for=@Model.BranchId class="form-control" id="branchList" name="BranchId" asp-items="@ViewBag.BranchId">
+                    <option value="0">Any</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="col-form-label mx-2">Warehouse</label>
+                <select asp-for=@Model.WarehouseId class="form-control" id="warehouseList" name="WarehouseId" asp-items="@ViewBag.WarehouseId">
+                    <option value="0">Any</option>
+                </select>
+            </div>
+            <input id="filterBtn" type="submit" value="Go" class="btn btn-sm btn-primary mx-2" />
+        </form>
+    </div>
+
+    <table class="table table-striped w-100">
+        <thead class="thead-dark">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Batches.FirstOrDefault().Product)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Batches.FirstOrDefault().ArrivalDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Batches.FirstOrDefault().ExpiryDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Batches.FirstOrDefault().Quantity)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Batches.FirstOrDefault().Branch)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Batches.FirstOrDefault().Warehouse)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Batches)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ArrivalDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ExpiryDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Branch.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Warehouse.Title)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@section Scripts {
+   <script src="~/js/filter.js"></script>
+}

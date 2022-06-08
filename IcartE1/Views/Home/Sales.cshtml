@@ -1,0 +1,76 @@
+﻿@model IcartE1.Models.SalesFilterViewModel
+@{
+    ViewData["Title"] = "Sales";
+}
+
+<div class="container py-4">
+			<h1 class="font-weight-light">Sales Chart</h1>
+			<hr />
+	<div class="row justify-content-center">
+
+		<div class="my-auto"> 
+			<form class="form-inline">
+				<label class="col-form-label mx-2">Product</label>
+				<select asp-for=@Model.productId class="form-control" id="productList" name="ProductId" asp-items="@ViewBag.ProductId">
+					<option value="0">All</option>
+				</select>
+				<label class="col-form-label mx-2">Branch</label>
+				<select asp-for=@Model.BranchId class="form-control" id="branchList" name="BranchId" asp-items="@ViewBag.BranchId">
+					<option value="0">All</option>
+				</select>
+				<label class="col-form-label mx-2">Cash</label>
+				<input id="cashBool" asp-for="@Model.IsCash" name="IsCash" />
+
+				<input id="filterBtn" type="submit" value="Go" class="btn btn-sm btn-primary mx-2" />
+			</form>
+		</div>
+	</div>
+
+</div>
+	<div id="chartContainer" style="height: 370px; width: 100%;"></div>
+
+@section Scripts{
+<script>
+window.onload = function () {
+	var cashBool2 = document.getElementById("cashBool").checked;
+
+var chart = new CanvasJS.Chart("chartContainer", {
+	animationEnabled: true,
+	title: {
+		text: "Product Sales"
+	},
+	axisX: {
+		valueFormatString: "DD MMM"
+	},
+	axisY: {
+		title:cashBool2?"Sales in EGP" : "Sales in units",
+		prefix: ""
+	},
+	data: [{
+		type: "spline",
+		xValueType: "dateTime",
+		xValueFormatString: "DD MMM",
+		yValueFormatString: "#,###",					
+		dataPoints: @Html.Raw(ViewBag.DataPoints)
+	}]
+});
+chart.render();
+ 
+}
+</script>
+<script>
+var btn = document.getElementById("filterBtn");
+var productList = document.getElementById("productList");
+var branchList = document.getElementById("branchList");
+var cashBool = document.getElementById("cashBool");
+
+btn.addEventListener("click", () => {
+    var productId = productList.value;
+    var warehouseId = warehouseList.value;
+    var branchId = branchList.value;
+    var isCash = cashBool.checked.toString();
+    location.href = location.host + "/home/sales?productId=" + productId + "&branchId=" + branchId+"&isCash="+isCash;
+});
+</script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>	
+}

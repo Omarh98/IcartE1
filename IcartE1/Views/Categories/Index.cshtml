@@ -1,0 +1,39 @@
+﻿@model IEnumerable<IcartE1.Data.Category>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="container py-4">
+    <div class="mb-3">
+        <h1 class="display-4 d-inline">Categories</h1>
+
+        <span class="mx-2">
+            <a asp-action="Create">Create New</a>
+        </span>
+    </div>
+    
+    <div class="row">
+         @foreach (var item in Model)
+{
+    <div class="card shadow-sm rounded col-lg-5 my-2 mr-5">
+        <div class="row justify-content-between">
+            <div class="col-lg-6">
+                <div class="card-body h-100 d-flex flex-column justify-content-between">
+                    <h3 class="card-title align-top font-weight-light mb-5">@item.Title</h3>
+                    <div>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="card-link align-bottom">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="card-link text-danger align-bottom">Delete</a>
+                    </div>
+
+                </div>
+            </div>
+            <div style=" background: url(@item.ImageUrl);background-size: cover;background-repeat: no-repeat; background-position: center; " class="col-lg-6 border-left rounded" >
+            </div>
+        </div>
+
+    </div>
+}
+    </div>
+   
+</div>
