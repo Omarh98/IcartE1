@@ -55,7 +55,7 @@ namespace IcartE1.Controllers.API
 
         // POST: api/Orders
         [HttpPost]
-        public async Task<ActionResult<Order>> AddOrderAsync([FromBody] AddOrderViewModel orderViewModel)
+        public async Task<IActionResult> AddOrderAsync([FromBody] AddOrderViewModel orderViewModel)
         {
             var cart = SessionHelper.GetObjectFromJson<Dictionary<string, CartItemViewModel>>(HttpContext.Session, "cart");
 
@@ -76,7 +76,7 @@ namespace IcartE1.Controllers.API
                 if (voucher.MinOrder > subTotal) return BadRequest($"Add {voucher.MinOrder - subTotal} EGP to your order to be able to use this voucher");
 
                 discount = voucher.Value<=subTotal?voucher.Value:0;
-                customer.Vouchers.Remove(voucher);
+                _context.Vouchers.Remove(voucher);
             }
 
             if (!orderViewModel.IsOnline)
@@ -129,14 +129,14 @@ namespace IcartE1.Controllers.API
 
             if(customer.RewardPoints>= 500)
             {
-                customer.Vouchers.Add(new Voucher {
+              await _context.Vouchers.AddAsync(new Voucher {
                     Title = "Loyalty Voucher",
                     Description = "You've received a discount voucher for your loyalty",
                     ExpiryDate = DateTime.Today.AddDays(14),
                     CustomerId = customer.Id,
                     MinOrder = 100.0f,
                     Value = customer.RewardPoints/10
-                });;
+                });
 
                 customer.RewardPoints -= 500;
             }
