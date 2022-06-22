@@ -72,6 +72,9 @@ namespace IcartE1
                     EncryptionAlgorithm = EncryptionAlgorithm.AES_256_GCM,
                     ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
                 }); ;
+
+            services.AddHttpClient();
+
             services.AddSession();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<ICipherService, CipherService>();

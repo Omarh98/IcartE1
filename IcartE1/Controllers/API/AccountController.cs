@@ -55,14 +55,18 @@ namespace IcartE1.Controllers.API
 
         [HttpPatch("update-address")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Customer")]
-        public async Task<IActionResult> UpdateAddressAsync([FromBody] string address)
+        public async Task<IActionResult> UpdateAddressAsync([FromBody] UpdateAddressViewModel addressViewModel)
         {
-            if(String.IsNullOrWhiteSpace(address)) return BadRequest(new {error="Address is empty."});
+            if (!ModelState.IsValid) return ValidationProblem();
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null) return NotFound();
 
             var customer = await _dbContext.Customers.FindAsync(userId);
-            customer.Address = address;
+            customer.Address = addressViewModel.Address;
+            customer.Longitude = addressViewModel.Longitude;
+            customer.Latitude = addressViewModel.Latitude;
+
             await _dbContext.SaveChangesAsync();
             return Ok();
         }
@@ -175,7 +179,7 @@ namespace IcartE1.Controllers.API
 
                 if (user == null || user.RefreshToken != refreshModel.RefreshToken || user.RefreshTokenExpirationDate <= DateTime.Now)
                 {
-                    return BadRequest();
+                    return BadRequest(new { error = "Refresh token is invalid or expired." });
                 }
                 var accessToken = _tokenService.GenerateAccessToken(principal.Claims);
                 var refreshToken = _tokenService.GenerateRefreshToken();
@@ -196,7 +200,7 @@ namespace IcartE1.Controllers.API
             var user = await _userManager.FindByIdAsync(userId);
 
             if (user == null)
-                return BadRequest();
+                return NotFound(new { error = "User doesn't exist" });
 
             user.RefreshToken = null;
             await _dbContext.SaveChangesAsync();

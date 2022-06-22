@@ -35,7 +35,7 @@ namespace IcartE1.Controllers.API
                .Select(b => new { b.ProductId, b.Product.Title, b.Product.Price, b.Product.ProductImages, b.Quantity }).ToListAsync();
 
                 if (products == null)
-                    return NotFound();
+                    return NotFound(new { error = "product not found" });
 
                 var grouped = products.GroupBy(b => b.ProductId)
                     .Select(g => new
@@ -51,7 +51,7 @@ namespace IcartE1.Controllers.API
                 return Ok(grouped);
             }
 
-            return BadRequest();
+            return BadRequest(new { error = "Invalid parameters" });
         }
 
         // GET: api/Products/5
@@ -62,7 +62,7 @@ namespace IcartE1.Controllers.API
 
             if (product == null)
             {
-                return NotFound();
+                return NotFound(new { error = "product not found" });
             }
 
             return product;

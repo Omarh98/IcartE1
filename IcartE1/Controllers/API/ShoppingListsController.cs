@@ -43,7 +43,7 @@ namespace IcartE1.Controllers.API
 
             if (shoppingList == null)
             {
-                return NotFound();
+                return NotFound(new { error = "list not found" });
             }
 
             return shoppingList;
@@ -77,7 +77,7 @@ namespace IcartE1.Controllers.API
             var shoppingList = await _context.ShoppingLists.Where(sl => sl.Id==id).Include(sl=>sl.ListItems).FirstAsync();
             if (shoppingList == null)
             {
-                return NotFound();
+                return NotFound(new { error = "list not found" });
             }
             _context.ListItems.RemoveRange(shoppingList.ListItems);
             _context.ShoppingLists.Remove(shoppingList);

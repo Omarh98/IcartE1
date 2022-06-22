@@ -64,7 +64,7 @@ namespace IcartE1.Controllers.API
             var customerPayment = await _context.CustomerPayment.FindAsync(id);
             if (customerPayment == null)
             {
-                return NotFound();
+                return NotFound(new {error="payment not found"});
             }
 
             _context.CustomerPayment.Remove(customerPayment);

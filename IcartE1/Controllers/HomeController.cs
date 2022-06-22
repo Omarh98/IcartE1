@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Net.Http;
 
 namespace IcartE1.Controllers
 {
@@ -81,6 +82,34 @@ namespace IcartE1.Controllers
             ViewBag.BranchId = new SelectList(await _context.Branches.ToListAsync(), "Id", "Title");
             ViewBag.DataPoints = JsonSerializer.Serialize(dataList);
             return View(new SalesFilterViewModel { productId = productId, BranchId = branchId ,IsCash=isCash});
+        }
+
+        public async Task<IActionResult> Forecasting([FromQuery] int category, [FromQuery] int days, [FromServices] IHttpClientFactory clientFactory)
+        {
+            var forecastingViewModel = new ForecastingFilterViewModel { Category = (ForecastingFilterViewModel.CategoryEnum)category, Days = days };
+
+            if(forecastingViewModel.Days > 0)
+            {
+                var categoryStr = forecastingViewModel.Category.ToString().Replace("_"," ");
+
+                var request = new HttpRequestMessage(HttpMethod.Get, $"https://gradprojectapi-edhez.ondigitalocean.app/predict?category={categoryStr}&n_days={days}");
+                var client = clientFactory.CreateClient();
+                var response = await client.SendAsync(request);
+
+                if (!response.IsSuccessStatusCode) return View(forecastingViewModel);
+                var content = await response.Content.ReadAsStringAsync();
+
+                var jsonOptions = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+                var predictions =  JsonSerializer.Deserialize<List<Prediction>>(content,jsonOptions);
+
+                var dataPoints = predictions.Select(p => new DataPoint((long)p.Date.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds, p.Sales)).ToList();
+                ViewBag.DataPoints = JsonSerializer.Serialize(dataPoints);
+            }
+
+            return View(forecastingViewModel);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

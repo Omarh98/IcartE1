@@ -1,0 +1,68 @@
+﻿@model IcartE1.Models.ForecastingFilterViewModel
+@{
+    ViewData["Title"] = "Forecasting";
+}
+
+<div class="container py-4">
+			<h1 class="font-weight-light">Forecasts Chart</h1>
+			<hr />
+	<div class="row justify-content-center">
+
+		<div class="my-auto"> 
+			<form class="form-inline">
+				<label class="col-form-label mx-2">Category</label>
+				<select asp-for=@Model.Category class="form-control" id="categoryList" name="Category" asp-items="Html.GetEnumSelectList<ForecastingFilterViewModel.CategoryEnum>()">
+				</select>
+				<label class="col-form-label mx-2">Days</label>
+				<input asp-for=@Model.Days class="form-control" id="days" name="Days"/>
+				
+				<input id="filterBtn" type="submit" value="Go" class="btn btn-sm btn-primary mx-2" />
+			</form>
+		</div>
+	</div>
+
+</div>
+	<div id="chartContainer" style="height: 370px; width: 100%;"></div>
+
+@section Scripts{
+	<script>
+window.onload = function () {
+
+var chart = new CanvasJS.Chart("chartContainer", {
+	animationEnabled: true,
+	title: {
+		text: "Category Forecast"
+	},
+	axisX: {
+		valueFormatString: "DD MMM"
+	},
+	axisY: {
+		title:"Forecast in units",
+		prefix: ""
+	},
+	data: [{
+		type: "spline",
+		xValueType: "dateTime",
+		xValueFormatString: "DD MMM",
+		yValueFormatString: "#,###",					
+		dataPoints: @Html.Raw(ViewBag.DataPoints)
+	}]
+});
+chart.render();
+ 
+}
+</script>
+<script>
+var btn = document.getElementById("filterBtn");
+var categoryList = document.getElementById("categoryList");
+var days = document.getElementById("days");
+
+btn.addEventListener("click", () => {
+    var category = categoryList.value;
+    var days = days.value;
+
+    location.href = location.host + "/home/forecasting?category=" + category + "&days=" + days;
+});
+</script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>	
+}

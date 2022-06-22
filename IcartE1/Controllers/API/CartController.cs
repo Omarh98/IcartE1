@@ -33,7 +33,7 @@ namespace IcartE1.Controllers.API
             var cart = SessionHelper.GetObjectFromJson<Dictionary<string, CartItemViewModel>>(HttpContext.Session, "cart");
 
             if (cart == null)
-                return NotFound();
+                return NotFound(new { error = "Cart is empty." });
 
             return Ok(cart);
 
@@ -43,7 +43,7 @@ namespace IcartE1.Controllers.API
         [HttpPost]
         public async Task<IActionResult> AddCartItemAsync([FromBody] AddCartItemViewModel addCartItemViewModel)
         {
-            if (addCartItemViewModel.ProductId > 0 && addCartItemViewModel.BatchId >= 0 && addCartItemViewModel.Quantity > 0)
+            if (ModelState.IsValid)
             {
                 
                 Product product;
@@ -51,7 +51,7 @@ namespace IcartE1.Controllers.API
                 {
                     product = await _context.Batches.Where(b => b.Id == addCartItemViewModel.BatchId && b.ProductId == addCartItemViewModel.ProductId).Include(b => b.Product).Select(b=>b.Product).FirstOrDefaultAsync();
                     if (product == null)
-                        return NotFound();
+                        return NotFound(new {error="product not found"});
 
                     
                     product.Batches = null;
@@ -93,7 +93,7 @@ namespace IcartE1.Controllers.API
 
                 return CreatedAtAction("GetCart", cart);
             }
-            return BadRequest();
+            return ValidationProblem();
 
         }
 
@@ -103,7 +103,7 @@ namespace IcartE1.Controllers.API
         {
             var cart = SessionHelper.GetObjectFromJson<Dictionary<string, CartItemViewModel>>(HttpContext.Session, "cart");
 
-            if (!cart.ContainsKey(key)) return NotFound();
+            if (!cart.ContainsKey(key)) return NotFound(new {error="Item not found"});
 
             if (cart[key].Quantity == 1) cart.Remove(key);
             else cart[key].Quantity--;

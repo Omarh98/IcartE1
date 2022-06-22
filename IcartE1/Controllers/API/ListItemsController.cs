@@ -53,7 +53,7 @@ namespace IcartE1.Controllers.API
             var listItem = await _context.ListItems.FindAsync(listId,productId);
             if (listItem == null)
             {
-                return NotFound();
+                return NotFound(new { error = "item not found" });
             }
 
             _context.ListItems.Remove(listItem);

@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using IcartE1.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Security.Claims;
+using IcartE1.Helpers;
 
 namespace IcartE1.Controllers.API
 {
@@ -34,37 +36,26 @@ namespace IcartE1.Controllers.API
 
         // GET: api/Branches
         [HttpGet]
-        public async Task<ActionResult<Branch>> GetBranch([FromQuery] double latitude, [FromQuery] double longitude)
+        public async Task<ActionResult<Branch>> GetBranches()
         {
+            var customer = await _context.Customers.FindAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            if(customer == null) return NotFound(new { error = "Client doesn't exist" });
+
             var branches = await _context.Branches.AsNoTracking().ToListAsync();
-            var closestBranch = branches.ElementAt(0);
-            double distance = double.MaxValue;
-            double newDistance = 0;
+            var comparer = new DistanceComparer(customer.Latitude, customer.Longitude);
+            branches.Sort(comparer);
 
-            foreach (var branch in branches)
+            var closeBranches = branches.Select(b => new
             {
-                newDistance = GetDistance(branch.Longitude, branch.Latitude, longitude, latitude);
+                b.Id,
+                b.Title,
+                Distance = comparer.GetDistance(b.Latitude, b.Longitude, customer.Latitude, customer.Longitude)
+            })
+                .Where(b => b.Distance < 5000);
 
-                if (newDistance < distance)
-                    closestBranch = branch;
-            }
-
-            if (newDistance <= 1000)
-                return Ok(closestBranch);
-            else
-                return NotFound();
-
+            if(branches.Any()) return Ok(closeBranches);
+            return NotFound(new { error = "Out of service range"});
         }
 
-        private static double GetDistance(double longitude, double latitude, double otherLongitude, double otherLatitude)
-        {
-            var d1 = latitude * (Math.PI / 180.0);
-            var num1 = longitude * (Math.PI / 180.0);
-            var d2 = otherLatitude * (Math.PI / 180.0);
-            var num2 = otherLongitude * (Math.PI / 180.0) - num1;
-            var d3 = Math.Pow(Math.Sin((d2 - d1) / 2.0), 2.0) + Math.Cos(d1) * Math.Cos(d2) * Math.Pow(Math.Sin(num2 / 2.0), 2.0);
-
-            return 6376500.0 * (2.0 * Math.Atan2(Math.Sqrt(d3), Math.Sqrt(1.0 - d3)));
-        }
     }
 }

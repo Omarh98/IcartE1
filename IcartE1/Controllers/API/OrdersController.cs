@@ -46,7 +46,7 @@ namespace IcartE1.Controllers.API
 
             if (order == null)
             {
-                return NotFound();
+                return NotFound(new { error = "order not found" });
             }
 
             return order;
@@ -70,7 +70,7 @@ namespace IcartE1.Controllers.API
             {
                 var voucher = await _context.Vouchers.FindAsync(orderViewModel.VoucherId);
 
-                if (voucher == null) return BadRequest("Invalid voucher");
+                if (voucher == null) return NotFound("Invalid voucher");
                 if (voucher.CustomerId != customer.Id) return BadRequest("User can't use this voucher");
                 if (voucher.ExpiryDate.CompareTo(DateTime.Today) < 0) return BadRequest("Voucher Expired");
                 if (voucher.MinOrder > subTotal) return BadRequest($"Add {voucher.MinOrder - subTotal} EGP to your order to be able to use this voucher");
@@ -96,14 +96,19 @@ namespace IcartE1.Controllers.API
 
                 var groups = batches.OrderBy(oi => oi.ArrivalDate).GroupBy(oi => oi.ProductId).ToList();
 
-                orderItems.ForEach(oi =>
+                await Task.WhenAll(orderItems.Select(async oi =>
                 {
                     var filteredBatches = groups.Where(g => g.Key == oi.ProductId).FirstOrDefault().ToList();
                     var batch = filteredBatches.Where(b => b.Quantity >= oi.Quantity).FirstOrDefault();
-
+                    batch = await _context.Batches.FindAsync(batch.Id);
                     batch.Quantity -= oi.Quantity;
-                    _context.Update(batch);
-                });
+                }));
+               //orderItems.ForEach(async oi =>
+               // {
+                    
+
+                    
+               // });
             }
 
             var order = new Order
@@ -134,14 +139,14 @@ namespace IcartE1.Controllers.API
                     Description = "You've received a discount voucher for your loyalty",
                     ExpiryDate = DateTime.Today.AddDays(14),
                     CustomerId = customer.Id,
-                    MinOrder = 100.0f,
-                    Value = customer.RewardPoints/10
+                    MinOrder = 200.0f,
+                    Value = customer.RewardPoints/5
                 });
 
                 customer.RewardPoints -= 500;
             }
 
-            orderItems.ForEach(async oi =>
+            await Task.WhenAll(orderItems.Select(async oi =>
             {
                 var salesEntity = await _context.Sales.FindAsync(oi.ProductId, orderViewModel.BranchId, DateTime.Today);
                 if (salesEntity != null)
@@ -158,13 +163,17 @@ namespace IcartE1.Controllers.API
 
                     await _context.Sales.AddAsync(salesItem);
                 }
+            }));
 
-            });
+            //orderItems.ForEach(async oi =>
+            //{
+       
 
-            await _context.SaveChangesAsync();
+            //});
+
 
             SessionHelper.SetObjectAsJson(HttpContext.Session, "cart", null);
-
+            await _context.SaveChangesAsync();
             return CreatedAtAction("GetOrder", new { id = order.Id }, order);
         }
 
