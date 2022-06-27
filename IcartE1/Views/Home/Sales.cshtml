@@ -47,9 +47,9 @@ var chart = new CanvasJS.Chart("chartContainer", {
 		prefix: ""
 	},
 	data: [{
-		type: "spline",
+		type: "column",
 		xValueType: "dateTime",
-		xValueFormatString: "DD MMM",
+		xValueFormatString: "DD MMM YY",
 		yValueFormatString: "#,###",					
 		dataPoints: @Html.Raw(ViewBag.DataPoints)
 	}]

@@ -90,13 +90,18 @@ namespace IcartE1.Controllers
 
             if(forecastingViewModel.Days > 0)
             {
-                var categoryStr = forecastingViewModel.Category.ToString().Replace("_"," ");
+                var categoryStr = forecastingViewModel.Category.ToString();
 
-                var request = new HttpRequestMessage(HttpMethod.Get, $"https://gradprojectapi-edhez.ondigitalocean.app/predict?category={categoryStr}&n_days={days}");
+                var request = new HttpRequestMessage(HttpMethod.Get, $"https://gradprojectapi-56c5b.ondigitalocean.app/predict?category={categoryStr}&n_days={days}");
+                ViewBag.Error = null;
                 var client = clientFactory.CreateClient();
                 var response = await client.SendAsync(request);
 
-                if (!response.IsSuccessStatusCode) return View(forecastingViewModel);
+                if (!response.IsSuccessStatusCode) 
+                { 
+                    ViewBag.Error = true;
+                    return View(forecastingViewModel); 
+                }
                 var content = await response.Content.ReadAsStringAsync();
 
                 var jsonOptions = new JsonSerializerOptions
@@ -107,6 +112,7 @@ namespace IcartE1.Controllers
 
                 var dataPoints = predictions.Select(p => new DataPoint((long)p.Date.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds, p.Sales)).ToList();
                 ViewBag.DataPoints = JsonSerializer.Serialize(dataPoints);
+                ViewBag.Error = false;
             }
 
             return View(forecastingViewModel);

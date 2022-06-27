@@ -13,7 +13,7 @@ namespace IcartE1.Models
             [Display(Name = "Automotive")]
             automotive,
             [Display(Name = "Personal Care")]
-            personal_care,
+            personalcare,
             [Display(Name = "Hardware")]
             hardware,
             [Display(Name = "Seafood")]
@@ -23,7 +23,7 @@ namespace IcartE1.Models
             [Display(Name = "Cleaning")]
             cleaning,
             [Display(Name = "Frozen Food")]
-            frozen_food
+            frozenfood
         }
     }
 }

@@ -22,7 +22,24 @@
 	</div>
 
 </div>
-	<div id="chartContainer" style="height: 370px; width: 100%;"></div>
+	@if(ViewBag.Error==null)
+	{
+		<div class="container">
+			<h3 class="font-weight-light px-5 mt-4 text-center">Welcome to the demand forecasting tool!</h3>
+				<h4 style="width:20rem;" class="mx-auto font-weight-light text-center text-wrap">Choose desired category and number of days to begin.</h4>
+				
+		</div>
+	}
+	else if (ViewBag.Error)
+	{
+		<div class="container">
+			<h3 class="font-weight-light px-5 my-4 text-center">An error occured while processing your request.<br/> Please try again.</h3>
+		</div>
+	}
+	else
+	{
+		<div id="chartContainer" style="height: 370px; width: 100%;"></div>
+	}
 
 @section Scripts{
 	<script>
@@ -43,7 +60,7 @@ var chart = new CanvasJS.Chart("chartContainer", {
 	data: [{
 		type: "spline",
 		xValueType: "dateTime",
-		xValueFormatString: "DD MMM",
+		xValueFormatString: "DD MMM YY",
 		yValueFormatString: "#,###",					
 		dataPoints: @Html.Raw(ViewBag.DataPoints)
 	}]

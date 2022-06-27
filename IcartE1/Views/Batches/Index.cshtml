@@ -19,19 +19,19 @@
             <div class="form-group">
                 <label class="col-form-label mx-2">Product</label>
                 <select asp-for=@Model.ProductId class="form-control" id="productList" name="ProductId" asp-items="@ViewBag.ProductId">
-                    <option value="0">Any</option>
+                    <option value="0">All</option>
                 </select>
             </div>
             <div class="form-group">
                 <label class="col-form-label mx-2">Branch</label>
                 <select asp-for=@Model.BranchId class="form-control" id="branchList" name="BranchId" asp-items="@ViewBag.BranchId">
-                    <option value="0">Any</option>
+                    <option value="0">All</option>
                 </select>
             </div>
             <div class="form-group">
                 <label class="col-form-label mx-2">Warehouse</label>
                 <select asp-for=@Model.WarehouseId class="form-control" id="warehouseList" name="WarehouseId" asp-items="@ViewBag.WarehouseId">
-                    <option value="0">Any</option>
+                    <option value="0">All</option>
                 </select>
             </div>
             <input id="filterBtn" type="submit" value="Go" class="btn btn-sm btn-primary mx-2" />
