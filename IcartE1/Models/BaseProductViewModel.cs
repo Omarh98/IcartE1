@@ -15,11 +15,11 @@ namespace IcartE1.Models
         public string Description { get; set; }
         [Required, Range(minimum: 0.49, maximum: double.MaxValue)]
         public float Price { get; set; }
-        [Required]
+        [Required,Display(Name ="Reorder Quantity")]
         public int ReorderQuantity { get; set; }
-        [Required]
+        [Required,Display(Name ="Category")]
         public int CategoryId { get; set; }
-        [Required]
+        [Required,Display(Name ="Vendor")]
         public int VendorId { get; set; }
 
         public IFormFileCollection Images { get; set; }

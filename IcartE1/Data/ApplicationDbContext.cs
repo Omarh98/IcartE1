@@ -56,16 +56,7 @@ namespace IcartE1.Data
 
                 );
 
-            builder.Entity<Sales>().HasData(
-                new Sales { ProductId = 1, BranchId = 1, Date = new DateTime(2022, 5, 15), Quantity = 53 },
-                new Sales { ProductId = 1, BranchId = 1, Date = new DateTime(2022, 5, 16), Quantity = 65 },
-                new Sales { ProductId = 1, BranchId = 1, Date = new DateTime(2022, 5, 17), Quantity = 72 },
-                new Sales { ProductId = 1, BranchId = 1, Date = new DateTime(2022, 5, 18), Quantity = 100 },
-                 new Sales { ProductId = 2, BranchId = 1, Date = new DateTime(2022, 5, 15), Quantity = 153 },
-                new Sales { ProductId = 2, BranchId = 1, Date = new DateTime(2022, 5, 16), Quantity = 265 },
-                new Sales { ProductId = 2, BranchId = 1, Date = new DateTime(2022, 5, 17), Quantity = 372 },
-                new Sales { ProductId = 2, BranchId = 1, Date = new DateTime(2022, 5, 18), Quantity = 200 }
-                );
+
 
         }
 

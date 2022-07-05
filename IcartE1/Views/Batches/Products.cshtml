@@ -14,6 +14,12 @@
                 <th>
                     @Html.DisplayNameFor(model => model.Title)
                 </th>
+                 <th>
+                    @Html.DisplayNameFor(model => model.BranchTitle)
+                </th>
+                 <th>
+                    @Html.DisplayNameFor(model => model.WarehouseTitle)
+                </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Quantity)
                 </th>
@@ -29,6 +35,12 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Title)
                 </td>
+                 <td>
+                    @Html.DisplayFor(modelItem => item.BranchTitle)
+                </td>
+                 <td>
+                    @Html.DisplayFor(modelItem => item.WarehouseTitle)
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Quantity)
                 </td>
@@ -43,8 +55,8 @@
                     }
                 </td>
                 <td>
-                    <a asp-action="Index" asp-route-productId="@item.Key">View Batches</a>
-                    @if (item.Quantity < item.ReorderQuantity)
+                    <a asp-action="Index" asp-route-productId="@item.Key" asp-route-branchId="@item.BranchId" asp-route-warehouseId="@item.WarehouseId">View Batches</a>
+                    @if (item.Quantity <= item.ReorderQuantity)
                     {
                     <span>|</span>
                     <a href="mailto:@item.Email">Email</a>

@@ -18,6 +18,7 @@ namespace IcartE1.Data
         public int ReorderQuantity { get; set; }
         [Required]
         public int CategoryId { get; set; }
+        public Category Category { get; set; }
         [Required]
         public int VendorId { get; set; }
         public Vendor Vendor { get; set; }

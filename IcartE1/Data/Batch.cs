@@ -16,11 +16,13 @@ namespace IcartE1.Data
 
         [Required, DataType(dataType: DataType.Date), Display(Name = "Expiry Date")]
         public DateTime ExpiryDate { get; set; }
+        [Display(Name ="Product")]
         public int ProductId { get; set; }
         public Product Product { get; set; }
-        
+        [Display(Name = "Branch")]
         public int? BranchId { get; set; }
         public Branch Branch { get; set; }
+        [Display(Name = "Warehouse")]
         public int? WarehouseId { get; set; }
         public Warehouse Warehouse { get; set; }
         public string QrImageUrl { get; set; }

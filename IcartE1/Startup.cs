@@ -48,6 +48,7 @@ namespace IcartE1
 
             services.AddIdentity<ApplicationUser, IdentityRole>(options => options.Password.RequiredLength = 8)
                 .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+            services.ConfigureApplicationCookie(options => options.LoginPath = "/Account/LoginAdmin");
 
             services.AddAuthentication().AddJwtBearer(options =>
             {

@@ -33,7 +33,7 @@ namespace IcartE1.Controllers.API
         //}
 
         // GET: api/Branches
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> GetBranches([FromBody] BranchFilterViewModel filterViewModel)
         {
             if (!ModelState.IsValid) return ValidationProblem();
@@ -49,11 +49,11 @@ namespace IcartE1.Controllers.API
             {
                 b.Id,
                 b.Title,
-                Distance = comparer.GetDistance(b.Latitude, b.Longitude, customer.Latitude, customer.Longitude)
+                Distance = comparer.GetDistance(b.Longitude, b.Latitude, filterViewModel.IsOnline ? customer.Longitude : filterViewModel.longitude, filterViewModel.IsOnline ? customer.Latitude : filterViewModel.latitude)
             })
                 .Where(b => b.Distance < (filterViewModel.IsOnline? 8000:500));
 
-            if(branches.Any()) return Ok(closeBranches);
+            if(closeBranches.Any()) return Ok(closeBranches);
             return NotFound(new { error = "Out of service range"});
         }
 

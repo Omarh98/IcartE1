@@ -27,29 +27,30 @@ namespace IcartE1.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> LoginAdmin(LoginViewModel loginViewModel)
+        public async Task<IActionResult> LoginAdmin( LoginViewModel loginViewModel)
         {
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByEmailAsync(loginViewModel.Email);
-                if (await _userManager.IsInRoleAsync(user, "Admin"))
+                if (user != null)
                 {
-                    var result = await _signInManager.PasswordSignInAsync(user, loginViewModel.Password, false, false);
-                    if (result.Succeeded)
+                    if (await _userManager.IsInRoleAsync(user, "Admin"))
                     {
-                        //if (!String.IsNullOrEmpty(ReturnUrl))
-                        //{
-                        //    return LocalRedirect(ReturnUrl);
-                        //}
-                        return RedirectToAction("Index", "Home");
-                    }
+                        var result = await _signInManager.PasswordSignInAsync(user, loginViewModel.Password, false, false);
+                        if (result.Succeeded)
+                        {
 
-                    ModelState.AddModelError("", "Email or Password may be invalid.");
+                            return RedirectToAction("Index", "Home");
+                        }
+
+                        ModelState.AddModelError("", "Email or Password may be invalid.");
+                        return View(loginViewModel);
+                    }
+                    ModelState.AddModelError("", "User doesn't have permission.");
                     return View(loginViewModel);
                 }
-                ModelState.AddModelError("", "User doesn't have permission.");
+                ModelState.AddModelError("", "Email or Password may be invalid.");
                 return View(loginViewModel);
-
             }
             return View(loginViewModel);
         }

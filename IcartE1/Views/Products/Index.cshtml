@@ -1,4 +1,4 @@
-﻿@model IEnumerable<IcartE1.Data.Product>
+﻿@model IcartE1.Models.ProductFilterViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -12,9 +12,28 @@
             <a asp-action="Create">Create New</a>
         </span>
     </div>
+    <div class="mb-3">
+
+        <form class="form-inline">
+
+            <div class="form-group">
+                <label class="col-form-label mx-2">Category</label>
+                <select asp-for=@Model.CategoryId class="form-control" id="categoryList" name="CategoryId" asp-items="@ViewBag.CategoryId">
+                    <option value="0">All</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="col-form-label mx-2">Vendor</label>
+                <select asp-for=@Model.VendorId class="form-control" id="vendorList" name="VendorId" asp-items="@ViewBag.VendorId">
+                    <option value="0">All</option>
+                </select>
+            </div>
+            <input id="filterBtn" type="submit" value="Go" class="btn btn-sm btn-primary mx-2" />
+        </form>
+    </div>
     
     <div id="accordion">
-        @foreach (var item in Model)
+        @foreach (var item in Model.Products)
         {
             <div class="card">
                 <div class="card-header" id="heading@(item.Id)">
@@ -26,8 +45,8 @@
                         </h5>
                         <div class="d-inline-flex">
                             <a class="mx-2" asp-action="Sales" asp-controller="Home" asp-route-productId="@item.Id">Sales</a> |
-   <a class="mx-2" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-    <a class="mx-2 text-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                            <a class="mx-2" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                            <a class="mx-2 text-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                         </div>
                     </div>
                 </div>
@@ -39,17 +58,26 @@
                                 <h2 class="font-weight-light mb-3">Details</h2>
                                 
                                 <div>
-                                    <label asp-for="@item.Description" class="font-weight-bold"></label>
+                                    <label asp-for="@item.Description" class="font-weight-bold mb-0"></label>
                                     <span class="mx-2">@item.Description</span>
                                 </div>
                                 <div>
                                     <label asp-for="@item.Price" class="font-weight-bold"></label>
                                     <span class="mx-2">@item.Price</span>
                                 </div>
-                                <div>
+                                 <div>
                                     <label asp-for="@item.ReorderQuantity" class="font-weight-bold"></label>
                                     <span class="mx-2">@item.ReorderQuantity</span>
                                 </div>
+                                <div>
+                                    <label asp-for="@item.Category" class="font-weight-bold"></label>
+                                    <span class="mx-2">@item.Category.Title</span>
+                                </div>
+                                <div>
+                                    <label asp-for="@item.Vendor" class="font-weight-bold"></label>
+                                    <span class="mx-2">@item.Vendor.Name</span>
+                                </div>
+                               
                               
                             </div>
                             <div class="col-lg-6">
@@ -74,3 +102,16 @@
 
 
 </div>
+
+@section Scripts{
+<script>var btn = document.getElementById("filterBtn");
+var categoryList = document.getElementById("categoryList");
+var vendorList = document.getElementById("vendorList");
+
+btn.addEventListener("click", () => {
+    var vendorId = vendorList.value;
+    var categoryId = categoryList.value;
+    location.href = location.host + "/products?categoryId=" + categoryId + "&vendorId=" + vendorId;
+});</script>
+
+}

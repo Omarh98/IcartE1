@@ -29,9 +29,9 @@ namespace IcartE1.Controllers
         // GET: Batches
         public async Task<IActionResult> Index([FromQuery] int productId, [FromQuery] int branchId, [FromQuery] int warehouseId)
         {
-            ViewBag.ProductId = new SelectList(await _context.Products.ToListAsync(), "Id", "Title");
-            ViewBag.BranchId = new SelectList(await _context.Branches.ToListAsync(), "Id", "Title");
-            ViewBag.WarehouseId = new SelectList(await _context.Warehouses.ToListAsync(), "Id", "Title");
+            ViewBag.ProductId = new SelectList(await _context.Products.AsNoTracking().ToListAsync(), "Id", "Title");
+            ViewBag.BranchId = new SelectList(await _context.Branches.AsNoTracking().ToListAsync(), "Id", "Title");
+            ViewBag.WarehouseId = new SelectList(await _context.Warehouses.AsNoTracking().ToListAsync(), "Id", "Title");
             var model = new BatchFilterViewModel
             {
                 ProductId = productId,
@@ -93,19 +93,25 @@ namespace IcartE1.Controllers
             return BadRequest();
         }
 
-        public IActionResult Products()
+        public async Task<IActionResult> Products()
         {
-            var groupedBatches = _context.Batches.Where(b => b.ExpiryDate > DateTime.Now).Include(b => b.Product).ThenInclude(p=>p.Vendor).AsEnumerable()
-                 .GroupBy(b => b.ProductId);
+            var batches =await _context.Batches.Where(b => b.ExpiryDate > DateTime.Now)
+                .Include(b => b.Warehouse).Include(b => b.Branch).Include(b => b.Product).ThenInclude(p => p.Vendor).ToListAsync();
+
+               var groupedBatches=batches.GroupBy(b => new { b.ProductId ,b.BranchId,b.WarehouseId});
 
             var productsStocks = groupedBatches.Select(g => new ProductStocksViewModel
             {
-                Key = g.Key,
+                Key = g.Key.ProductId,
                 Quantity = g.Sum(b => b.Quantity),
                 ReorderQuantity=g.FirstOrDefault().Product.ReorderQuantity,
                 Email = g.FirstOrDefault().Product.Vendor.Email,
                 PhoneNumber = g.FirstOrDefault().Product.Vendor.PhoneNumber,
-                Title = g.FirstOrDefault().Product.Title
+                Title = g.FirstOrDefault().Product.Title,
+                WarehouseTitle=g.FirstOrDefault().Warehouse==null?"": g.FirstOrDefault().Warehouse.Title,
+                BranchTitle = g.FirstOrDefault().Branch == null ? "" : g.FirstOrDefault().Branch.Title,
+                WarehouseId= (int)(g.FirstOrDefault().WarehouseId == null ? 0 : g.FirstOrDefault().WarehouseId),
+                BranchId = (int)(g.FirstOrDefault().BranchId == null ? 0 : g.FirstOrDefault().BranchId),
             }).OrderBy(ps => ps.Quantity);
 
 

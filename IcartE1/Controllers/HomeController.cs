@@ -53,28 +53,28 @@ namespace IcartE1.Controllers
             if (productId > 0 && branchId == 0)
             {
                 var sales = await _context.Sales.Where(s => s.ProductId == productId)
-                    .Select(s => new { s.Date, s.Quantity, s.Product.Price }).ToListAsync();
+                    .Select(s => new { s.Date, s.Quantity, s.Product.Price }).AsNoTracking().ToListAsync();
                 dataList = sales.Select(s => new DataPoint((long)s.Date.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds, isCash ? s.Quantity * s.Price : (double)s.Quantity)).ToList();
 
             }
             else if (branchId > 0 && productId > 0)
             {
                 var sales = await _context.Sales.Where(s => s.BranchId == branchId && s.ProductId == productId)
-                    .Select(s => new { s.Date, s.Quantity, s.Product.Price }).ToListAsync();
+                    .Select(s => new { s.Date, s.Quantity, s.Product.Price }).AsNoTracking().ToListAsync();
                 dataList = sales.Select(s => new DataPoint((long)s.Date.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds, isCash ? s.Quantity * s.Price : (double)s.Quantity)).ToList();
 
             }
             else if (branchId > 0 && productId == 0)
             {
                 var sales = await _context.Sales.Where(s => s.BranchId == branchId)
-                    .GroupBy(s => s.Date).Select(g => new { Date = g.Key, Quantity = isCash ? g.Sum(g => g.Quantity * g.Product.Price) : g.Sum(g => g.Quantity) }).ToListAsync();
+                    .GroupBy(s => s.Date).Select(g => new { Date = g.Key, Quantity = isCash ? g.Sum(g => g.Quantity * g.Product.Price) : g.Sum(g => g.Quantity) }).AsNoTracking().ToListAsync();
                 dataList = sales.Select(s => new DataPoint((long)s.Date.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds, s.Quantity)).ToList();
 
             }
             else
             {
                 var sales = await _context.Sales.GroupBy(s => s.Date)
-                    .Select(g => new { Date = g.Key, Quantity = isCash ? g.Sum(g => g.Quantity * g.Product.Price) : g.Sum(g => g.Quantity) }).ToListAsync();
+                    .Select(g => new { Date = g.Key, Quantity = isCash ? g.Sum(g => g.Quantity * g.Product.Price) : g.Sum(g => g.Quantity) }).AsNoTracking().ToListAsync();
                 dataList = sales.Select(s => new DataPoint((long)s.Date.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds, s.Quantity)).ToList();
             }
 
@@ -84,6 +84,7 @@ namespace IcartE1.Controllers
             return View(new SalesFilterViewModel { productId = productId, BranchId = branchId ,IsCash=isCash});
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Forecasting([FromQuery] int category, [FromQuery] int days, [FromServices] IHttpClientFactory clientFactory)
         {
             var forecastingViewModel = new ForecastingFilterViewModel { Category = (ForecastingFilterViewModel.CategoryEnum)category, Days = days };

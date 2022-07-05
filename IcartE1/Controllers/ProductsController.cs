@@ -31,9 +31,22 @@ namespace IcartE1.Controllers
         }
 
         // GET: Products
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromQuery] int categoryId, [FromQuery] int vendorId)
         {
-            return View(await _context.Products.Include(p => p.ProductImages).ToListAsync());
+            ViewBag.CategoryId = new SelectList(await _context.Categories.Select(c => new {c.Id,c.Title}).AsNoTracking().ToListAsync(), "Id", "Title");
+            ViewBag.VendorId = new SelectList(await _context.Vendors.Select(c => new { c.Id, c.Name }).AsNoTracking().ToListAsync(), "Id", "Name");
+
+            var model = new ProductFilterViewModel { CategoryId = categoryId, VendorId = vendorId };
+            if (model.CategoryId == 0 && model.VendorId == 0)
+                model.Products = await _context.Products.Include(p => p.ProductImages).Include(p => p.Category).Include(p => p.Vendor).AsNoTracking().OrderBy(p => p.Title).ToListAsync();
+            else if (model.CategoryId == 0 && model.VendorId > 0)
+               model.Products = await _context.Products.Where(p => p.VendorId == vendorId).Include(p => p.ProductImages).Include(p => p.Category).Include(p => p.Vendor).AsNoTracking().OrderBy(p => p.Title).ToListAsync();
+            else if (model.CategoryId > 0 && model.VendorId == 0)
+                model.Products = await _context.Products.Where(p => p.CategoryId == categoryId).Include(p => p.ProductImages).Include(p => p.Category).Include(p => p.Vendor).AsNoTracking().OrderBy(p => p.Title).ToListAsync();
+            else
+                model.Products = await _context.Products.Where(p => p.CategoryId == categoryId && p.VendorId==vendorId).Include(p => p.ProductImages).Include(p => p.Category).Include(p => p.Vendor).AsNoTracking().OrderBy(p => p.Title).ToListAsync();
+
+            return View(model);
         }
 
         // GET: Products/Details/5
@@ -44,7 +57,7 @@ namespace IcartE1.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products.Include(p => p.ProductImages).FirstOrDefaultAsync(m => m.Id == id);
+            var product = await _context.Products.Include(p => p.ProductImages).AsNoTracking().FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {
                 return NotFound();
@@ -56,8 +69,8 @@ namespace IcartE1.Controllers
         // GET: Products/Create
         public async Task<IActionResult> Create()
         {
-            var vendors = await _context.Vendors.Select(v => new { v.Id, v.Name }).ToListAsync();
-            var categories = await _context.Categories.Select(c => new { c.Id, c.Title }).ToListAsync();
+            var vendors = await _context.Vendors.Select(v => new { v.Id, v.Name }).AsNoTracking().ToListAsync();
+            var categories = await _context.Categories.Select(c => new { c.Id, c.Title }).AsNoTracking().ToListAsync();
 
             ViewBag.VendorId = new SelectList(vendors, "Id", "Name");
             ViewBag.CategoryId = new SelectList(categories, "Id", "Title");

@@ -41,6 +41,9 @@
     <table class="table table-striped w-100">
         <thead class="thead-dark">
             <tr>
+                 <th>
+                    @Html.DisplayNameFor(model => model.Batches.FirstOrDefault().Id)
+                </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Batches.FirstOrDefault().Product)
                 </th>
@@ -66,6 +69,9 @@
             @foreach (var item in Model.Batches)
             {
             <tr>
+                 <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Product.Title)
                 </td>
